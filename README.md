@@ -50,30 +50,7 @@ Sample Data is provided that needs to be loaded into your own S3 Bucket. Create 
         - y
         - z
 
-## Steps 
-
-Once the Data is stored in your S3 you can start processing it and storing it in the respective zones.
-
-### Landing Zone
-Start by creating two Glue jobs: <i>customer_landing_to_trusted.py</i> and <i>accelerometer_landing_to_trusted_zone.py</i>.
-In each Glue job, add a node that connects to the S3 bucket for the customer and accelerometer landing zones.
-
-### Trusted Zone
-Create two SQL DDL scripts: <i>customer_landing.sql</i> and <i>accelerometer_landing.sql<i>. </br>
-Make sure that the SQL DDL scripts include all of the JSON fields in the data input files and are appropriately typed (not everything is a string).
-Manually create a Glue Table using the Glue Console from the JSON data.
-Use Athena to query the Landing Zone and take a screenshot that shows a select statement from Athena displaying the customer landing data and accelerometer landing data. Ensure that the customer landing data has multiple rows where shareWithResearchAsOfDate is blank.
-Trusted Zone (Continued)
-Configure Glue Studio to dynamically update a Glue Table schema from JSON data.
-Take a screenshot that shows a select * statement from Athena displaying the customer landing data, where the resulting customer trusted data has no rows where shareWithResearchAsOfDate is blank.
-Ensure that the Glue jobs have inner joins that join up with the customer_landing table on the serialnumber field.
-Make sure that the Glue jobs drop data that doesn’t have data in the sharedWithResearchAsOfDate column.
-Curated Zone
-Write a Glue Job to join trusted data in the curated zone. Name the Glue job Customer_trusted_to_curated.py and Trainer_trusted_to_curated.py.
-Ensure that the curated data from the Glue tables is sanitized and only contains customer data from customer records that agreed to share data. Also, make sure it is joined with the correct accelerometer data.
-
-
-## Project Instructions
+##  Instructions
 
 Using AWS Glue, AWS S3, Python, and Spark, you will build a lakehouse solution in AWS that satisfies the requirements from the STEDI data scientists. Let's go through each step and understand the expected outcomes.
 
@@ -103,5 +80,21 @@ This is the result of accelerometer_landing.sql:
 
 This is the result of customer_trusted.sql:
 <img src="customer_trusted.png">Trusted Customer Data</img>
+
+
+## Use Case Discussion:  Purpose of Different Zones
+
+In this project, we have different zones that serve specific purposes in the data processing pipeline. 
+
+### Landing Zone
+The landing zone is where the raw data from various sources is initially stored. It acts as a staging area for data ingestion. In this project, we have three landing zones: `customer_landing`, `step_trainer_landing`, and `accelerometer_landing`. The purpose of the landing zone is to provide a centralized location for storing incoming data before further processing. The business use case is to ensure data availability and readiness for processing.
+
+### Trusted Zone
+The trusted zone is where the data is processed and transformed to ensure its quality and reliability. It stores the sanitized and validated data that meets specific criteria. In this project, we have two trusted zones: `customer_trusted`, `accelerometer_trusted` and `step-trainer_trusted`. The purpose of the trusted zone is to store data that has been cleansed and verified, such as customer records who agreed to share their data for research purposes. The business use case is to ensure data integrity and compliance with privacy regulations.
+
+### Curated Zone
+The curated zone is a refined and organized version of the data that is suitable for specific use cases or downstream applications. It contains data that has undergone further processing and filtering based on specific criteria. In this project, we have a curated zone called `customers_curated` and the `machine_learning` dataset. The business use case is to provide a clean and structured dataset for analysis, machine learning, or other business intelligence purposes.
+
+By segregating the data into different zones, this architecture enables better data management, data quality control, and efficient processing for various business use cases. It ensures that data is processed and stored in a controlled and meaningful manner, facilitating data-driven decision-making and insights.
 
 
